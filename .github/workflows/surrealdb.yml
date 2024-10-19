@@ -16,10 +16,6 @@ on:
         type: boolean
         default: true
 
-defaults:
-  run:
-    working-directory: surrealdb
-
 permissions:
   contents: read
   packages: write
@@ -43,7 +39,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: tags
+      - name: 'タグを準備'
         id: tags
         run: |
           echo "tags=$(
@@ -57,7 +53,7 @@ jobs:
       - uses: docker/build-push-action@v5
         with:
           platforms: ${{ steps.buildx.outputs.platforms }}
-          context: .
+          context: surrealdb
           build-args: TAG=${{ inputs.tag }}
           tags: ${{ steps.tags.outputs.tags }}
           push: ${{ inputs.push }}
