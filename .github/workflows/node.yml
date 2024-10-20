@@ -54,7 +54,7 @@ jobs:
         id: tags
         run: echo "tags=$(./tags.sh)" >>$GITHUB_OUTPUT
         env:
-          PACKAGE: node-distroless
+          PACKAGE: node-slim
           CSV_LIST: "${{ inputs.major }},${{ inputs.alias }}"
           REPO_OWNER: ${{ github.repository_owner }}
 
