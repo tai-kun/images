@@ -47,6 +47,7 @@ jobs:
         id: tags
         run: echo "tags=$(tags.sh)" >>$GITHUB_OUTPUT
         env:
+          PACKAGE: surrealdb
           CSV_LIST: "${{ inputs.tag }},${{ inputs.alias }}"
           REPO_OWNER: ${{ github.repository_owner }}
 
