@@ -63,8 +63,9 @@ jobs:
         working-directory: expressvpn
         run: |
           git clone --branch master https://github.com/Misioslav/expressvpn.git source
+          cp Dockerfile source/Dockerfile
+          cd source
           git checkout ${{ inputs.commit-hash }}
-          cp ../Dockerfile Dockerfile
 
       - uses: docker/build-push-action@v5
         with:
