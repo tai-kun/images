@@ -20,6 +20,10 @@ permissions:
   contents: read
   packages: write
 
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -41,14 +45,10 @@ jobs:
 
       - name: 'タグを準備'
         id: tags
-        run: |
-          echo "tags=$(
-            echo '${{ inputs.tag }},${{ inputs.alias }}' \
-              | tr ',' '\n' \
-              | sed 's/^[ \t]*//;s/[ \t]*$//' \
-              | grep -v '^$' | sed 's|^|ghcr.io/${{ github.repository_owner }}/surrealdb:|' \
-              | paste -sd ',' -
-          )" >>$GITHUB_OUTPUT
+        run: echo "tags=$(tags.sh)" >>$GITHUB_OUTPUT
+        env:
+          CSV_LIST: "${{ inputs.tag }},${{ inputs.alias }}"
+          REPO_OWNER: ${{ github.repository_owner }}
 
       - uses: docker/build-push-action@v5
         with:

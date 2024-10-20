@@ -1,0 +1,7 @@
+{
+  "editor.rulers": [80],
+  "[shellscript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFoldingRangeProvider": "timonwong.shellcheck"
+  }
+}
