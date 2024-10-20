@@ -82,7 +82,7 @@ jobs:
           platforms: ${{ steps.buildx.outputs.platforms }}
           context: expressvpn
           build-args: |
-            NUM=1
+            NUM=${{ inputs.version }}
             PLATFORM=${{ steps.params.outputs.platform }}
             DISTRIBUTION=${{ inputs.debian }}
           tags: ${{ steps.tags.outputs.tags }}
