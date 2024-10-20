@@ -52,7 +52,7 @@ jobs:
 
       - name: 'タグを準備'
         id: tags
-        run: echo "tags=$(tags.sh)" >>$GITHUB_OUTPUT
+        run: echo "tags=$(./tags.sh)" >>$GITHUB_OUTPUT
         env:
           PACKAGE: node-distroless
           CSV_LIST: "${{ inputs.major }},${{ inputs.alias }}"
@@ -88,7 +88,7 @@ jobs:
 
       - name: 'タグを準備'
         id: tags
-        run: echo "tags=$(tags.sh)" >>$GITHUB_OUTPUT
+        run: echo "tags=$(./tags.sh)" >>$GITHUB_OUTPUT
         env:
           PACKAGE: node-distroless
           CSV_LIST: "${{ inputs.major }},${{ inputs.alias }}"

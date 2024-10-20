@@ -45,7 +45,7 @@ jobs:
 
       - name: 'タグを準備'
         id: tags
-        run: echo "tags=$(tags.sh)" >>$GITHUB_OUTPUT
+        run: echo "tags=$(./tags.sh)" >>$GITHUB_OUTPUT
         env:
           PACKAGE: surrealdb
           CSV_LIST: "${{ inputs.tag }},${{ inputs.alias }}"
