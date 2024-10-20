@@ -68,7 +68,7 @@ jobs:
         working-directory: expressvpn
         run: |
           rm .gitkeep
-          git clone --branch master https://github.com/Misioslav/expressvpn.git
+          git clone --branch master https://github.com/Misioslav/expressvpn.git .
           git checkout ${{ inputs.commit-hash }}
 
           if [[ ${{ matrix.platform }} == 'linux/amd64' ]]; then
