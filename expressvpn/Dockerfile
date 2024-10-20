@@ -12,6 +12,12 @@ ENV CIPHER="chacha20"
 
 ARG NUM
 ARG TARGETPLATFORM
+ARG TARGETARCH
+ARG BUILDPLATFORM
+ARG BUILDARCH
+
+RUN echo "TARGETPLATFORM=${TARGETPLATFORM} TARGETARCH=${TARGETARCH}" && \
+    echo "BUILDPLATFORM=${BUILDPLATFORM} BUILDARCH=${BUILDARCH}"
 
 COPY files/ /expressvpn/
 
@@ -32,18 +38,18 @@ RUN if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
         export PLATFORM=armhf; \
     fi \
     && wget -q https://www.expressvpn.works/clients/linux/expressvpn_${NUM}-1_${PLATFORM}.deb -O /expressvpn/expressvpn_${NUM}-1_${PLATFORM}.deb \
-    && dpkg -i /expressvpn/expressvpn_${NUM}-1_${PLATFORM}.deb
-#     && rm -rf /expressvpn/*.deb
+    && dpkg -i /expressvpn/expressvpn_${NUM}-1_${PLATFORM}.deb \
+    && rm -rf /expressvpn/*.deb
 
-# RUN if [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
-#     patchelf --set-interpreter /lib/ld-linux-armhf.so.3 /usr/bin/expressvpn \
-#     && patchelf --set-interpreter /lib/ld-linux-armhf.so.3 /usr/bin/expressvpn-browser-helper; \
-#     fi
+RUN if [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
+    patchelf --set-interpreter /lib/ld-linux-armhf.so.3 /usr/bin/expressvpn \
+    && patchelf --set-interpreter /lib/ld-linux-armhf.so.3 /usr/bin/expressvpn-browser-helper; \
+    fi
 
-# RUN apt purge --autoremove -y wget \
-#     && rm -rf /var/lib/apt/lists/* \
-#     && rm -rf /var/log/*.log
+RUN apt purge --autoremove -y wget \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/log/*.log
 
-# HEALTHCHECK --start-period=30s --timeout=5s --interval=2m --retries=3 CMD bash /expressvpn/healthcheck.sh
+HEALTHCHECK --start-period=30s --timeout=5s --interval=2m --retries=3 CMD bash /expressvpn/healthcheck.sh
 
-# ENTRYPOINT ["/bin/bash", "/expressvpn/start.sh"]
+ENTRYPOINT ["/bin/bash", "/expressvpn/start.sh"]
