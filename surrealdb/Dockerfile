@@ -1,6 +1,6 @@
-ARG TAG=_
+ARG VERSION=_
 
-FROM surrealdb/surrealdb:${TAG}
+FROM surrealdb/surrealdb:v${VERSION}
 
 ENV SURREAL_STRICT=true
 

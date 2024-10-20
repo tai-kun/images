@@ -3,11 +3,11 @@ name: SurrealDB
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: 'SurrealDB の Docker のタグ (e.g. v2.0.0)'
+      version:
+        description: 'SurrealDB のバージョン (e.g. 2.0.0)'
         required: true
       alias:
-        description: 'タグに付ける別名、カンマ区切り (e.g. v2,v2.0,latest)'
+        description: 'タグに付ける別名、カンマ区切り (e.g. 2,2.0,latest)'
         required: false
         default: ''
       push:
@@ -48,14 +48,14 @@ jobs:
         run: echo "tags=$(./tags.sh)" >>$GITHUB_OUTPUT
         env:
           PACKAGE: surrealdb
-          CSV_LIST: "${{ inputs.tag }},${{ inputs.alias }}"
+          CSV_LIST: "${{ inputs.version }},${{ inputs.alias }}"
           REPO_OWNER: ${{ github.repository_owner }}
 
       - uses: docker/build-push-action@v5
         with:
           platforms: ${{ steps.buildx.outputs.platforms }}
           context: surrealdb
-          build-args: TAG=${{ inputs.tag }}
+          build-args: VERSION=${{ inputs.version }}
           tags: ${{ steps.tags.outputs.tags }}
           push: ${{ inputs.push }}
           cache-from: type=gha
