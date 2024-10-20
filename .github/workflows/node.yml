@@ -1,0 +1,89 @@
+name: Node.js
+
+on:
+  workflow_dispatch:
+    inputs:
+      major:
+        description: 'Node.js のメジャーバージョン (e.g. 22)'
+        required: true
+      alias:
+        description: 'タグに付ける別名、カンマ区切り (e.g. latest)'
+        required: false
+        default: ''
+      push:
+        description: 'push するかどうか'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  packages: write
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-qemu-action@v3
+
+      - id: buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'distroless の Node.js のバージョンを取得'
+        id: version
+        run: |
+          docker pull gcr.io/distroless/nodejs${{ inputs.major }}
+          version=$(docker run --rm gcr.io/distroless/nodejs22 --version)
+          echo "full=${version#v}" >>$GITHUB_OUTPUT
+
+      - name: 'slim 用のタグを準備'
+        id: slim-tags
+        run: echo "tags=$(tags.sh)" >>$GITHUB_OUTPUT
+        env:
+          PACKAGE: node-slim
+          CSV_LIST: "${{ inputs.major }},${{ inputs.alias }}"
+          REPO_OWNER: ${{ github.repository_owner }}
+
+      - name: 'distroless 用のタグを準備'
+        id: distroless-tags
+        run: echo "tags=$(tags.sh)" >>$GITHUB_OUTPUT
+        env:
+          PACKAGE: node-distroless
+          CSV_LIST: "${{ inputs.major }},${{ inputs.alias }}"
+          REPO_OWNER: ${{ github.repository_owner }}
+
+      - name: slim
+        uses: docker/build-push-action@v5
+        with:
+          platforms: ${{ steps.buildx.outputs.platforms }}
+          context: node/slim
+          build-args: VERSION=${{ steps.version.outputs.full }}
+          tags: ${{ steps.slim-tags.outputs.tags }}
+          push: ${{ inputs.push }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: distroless
+        uses: docker/build-push-action@v5
+        with:
+          platforms: ${{ steps.buildx.outputs.platforms }}
+          context: node/distroless
+          build-args: MAJOR=${{ inputs.major }}
+          tags: ${{ steps.distroless-tags.outputs.tags }}
+          push: ${{ inputs.push }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
