@@ -11,6 +11,7 @@ ENV PROTOCOL="lightway_udp"
 ENV CIPHER="chacha20"
 
 ARG NUM
+ARG TARGETPLATFORM
 
 COPY files/ /expressvpn/
 
