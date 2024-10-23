@@ -7,5 +7,3 @@ COPY --from=bun /usr/local/bin/bun  /usr/local/bin/bun
 COPY --from=bun /usr/local/bin/bunx /usr/local/bin/bunx
 
 WORKDIR /home/node
-
-ENTRYPOINT ["node"]
